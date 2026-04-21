@@ -404,16 +404,12 @@ GROUP BY
     m.id_materia;
 
 -- Query para ver cuantos alumnos tiene cada carrera
-SELECT 
-    c.nombre AS carrera,
-    m.nombre AS materia,
-    COUNT(n.id_alumno) AS cantidad_alumnos
-FROM 
-    carreras c
-INNER JOIN 
-    materias m ON c.id_carrera = m.id_carrera
-INNER JOIN 
-    notas n ON m.id_materia = n.id_materia
+SELECT carreras.nombre,
+carreras.id_carrera,
+COUNT(*)
+FROM carreras
+INNER JOIN alumnos ON
+	alumnos.id_carrera = carreras.id_carrera
 GROUP BY 
-    c.id_carrera, m.id_materia;
+	2,1
 
