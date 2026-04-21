@@ -1,0 +1,33 @@
+#tablero {
+    display: grid;
+    grid-template-columns: repeat(10, 40px); 
+    gap: 4px;
+    justify-content: center; 
+  }
+  
+  .carta {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #444;
+    color: white;
+    border-radius: 6px; 
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .carta.volteada {
+    background: white;
+    color: black;
+  }
+  
+  .carta.encontrada {
+    background: lightgreen;
+  }
+  
+  .carta:hover {
+    transform: scale(1.05); 
+  }
