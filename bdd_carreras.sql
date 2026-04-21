@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `alumnos` (
   UNIQUE KEY `dni` (`dni`),
   KEY `id_carrera` (`id_carrera`),
   CONSTRAINT `alumnos_ibfk_1` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`)
-) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) 
 
 -- Volcando datos para la tabla carrera.alumnos.
 INSERT INTO `alumnos` (`id_alumno`, `nombre`, `apellido`, `dni`, `fecha_nacimiento`, `id_carrera`) VALUES
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `carreras` (
   `nombre` varchar(100) NOT NULL,
   `duracion_anios` int DEFAULT NULL,
   PRIMARY KEY (`id_carrera`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) 
 
 -- Volcando datos para la tabla carrera.carreras.
 INSERT INTO `carreras` (`id_carrera`, `nombre`, `duracion_anios`) VALUES
@@ -190,19 +190,25 @@ CREATE TABLE IF NOT EXISTS `materias` (
   `nombre` varchar(100) NOT NULL,
   `id_carrera` int DEFAULT NULL,
   `id_profesor` int DEFAULT NULL,
+  `nota_aprobacion` decimal(4,2) DEFAULT NULL,
   PRIMARY KEY (`id_materia`),
   KEY `id_carrera` (`id_carrera`),
   KEY `id_profesor` (`id_profesor`),
   CONSTRAINT `materias_ibfk_1` FOREIGN KEY (`id_carrera`) REFERENCES `carreras` (`id_carrera`),
   CONSTRAINT `materias_ibfk_2` FOREIGN KEY (`id_profesor`) REFERENCES `profesores` (`id_profesor`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) 
+	
 -- Volcando datos para la tabla carrera.materias.
-INSERT INTO `materias` (`id_materia`, `nombre`, `id_carrera`, `id_profesor`) VALUES
-	(1, 'Programación I', 1, 1),
-	(2, 'Álgebra', 1, 2),
-	(3, 'Sistemas Contables', 3, 3),
-	(4, 'Administración General', 2, 3);
+INSERT INTO `materias` (`id_materia`, `nombre`, `id_carrera`, `id_profesor`, `nota_aprobacion`) VALUES
+	(1, 'Programación I', 1, 1, 6.00),
+	(2, 'Álgebra', 1, 2, 7.00),
+	(3, 'Sistemas Contables', 3, 3, 6.00),
+	(4, 'Administración General', 2, 3, 5.00);
+-- Actualizacion de notas aprobadas 
+UPDATE materias SET nota_aprobacion = 6.00 WHERE id_materia = 1;
+UPDATE materias SET nota_aprobacion = 7.00 WHERE id_materia = 2;
+UPDATE materias SET nota_aprobacion = 6.00 WHERE id_materia = 3;
+UPDATE materias SET nota_aprobacion = 5.00 WHERE id_materia = 4;
 
 -- Volcando estructura para tabla carrera.notas
 CREATE TABLE IF NOT EXISTS `notas` (
@@ -216,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `notas` (
   CONSTRAINT `notas_ibfk_1` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`id_alumno`),
   CONSTRAINT `notas_ibfk_2` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`id_materia`),
   CONSTRAINT `notas_chk_1` CHECK (((`nota` >= 0) and (`nota` <= 10)))
-) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) 
 
 -- Volcando datos para la tabla carrera.notas.
 INSERT INTO `notas` (`id_nota`, `id_alumno`, `id_materia`, `nota`) VALUES
@@ -385,4 +391,29 @@ INSERT INTO `profesores` (`id_profesor`, `nombre`, `apellido`, `especialidad`) V
 	(1, 'Juan', 'Pérez', 'Programación'),
 	(2, 'María', 'Gómez', 'Matemática'),
 	(3, 'Carlos', 'López', 'Contabilidad');
+
+-- Query para ver cuantos alumnos tiene cada materia 
+SELECT 
+    m.nombre AS materia,
+    COUNT(n.id_alumno) AS cantidad_alumnos
+FROM 
+    materias m
+INNER JOIN 
+    notas n ON m.id_materia = n.id_materia
+GROUP BY 
+    m.id_materia;
+
+-- Query para ver cuantos alumnos tiene cada carrera
+SELECT 
+    c.nombre AS carrera,
+    m.nombre AS materia,
+    COUNT(n.id_alumno) AS cantidad_alumnos
+FROM 
+    carreras c
+INNER JOIN 
+    materias m ON c.id_carrera = m.id_carrera
+INNER JOIN 
+    notas n ON m.id_materia = n.id_materia
+GROUP BY 
+    c.id_carrera, m.id_materia;
 
